@@ -1,0 +1,83 @@
+extends Area2D
+
+signal destroyed()
+
+var ball_scene = preload("res://Ball.tscn")
+var explosion_scene = preload("res://scenes/explosion.tscn")
+
+var player_name = 'player'
+
+var pointing_angle = 90.0
+var velocity = 200
+onready var cannon = $Sprite
+var direction = -1
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	$currentPlayerIndication.hide()
+	pass # Replace with function body.
+
+func set_current_player(current):
+	if current:
+		$currentPlayerIndication.show()
+	else:
+		$currentPlayerIndication.hide()
+
+func set_pointing_angle(angle):
+	pointing_angle = angle
+	rotate_deg()
+
+func rotate_deg():
+	cannon.rotation_degrees = pointing_angle -90
+
+
+func _process(delta):
+	cannon.scale.x = direction
+
+func shoot():
+	var resp = []
+	var stage_node = get_parent()
+	var ball_instance = ball_scene.instance()
+#	ball_instance.add_collision_exception_with(self) ... only for body
+
+	ball_instance.add_to_group("just_fired")
+
+	ball_instance.position = position
+
+	var angle = pointing_angle
+
+	var rad_ang = (angle -90) * PI / 180
+
+	var dir = Vector2(cos(rad_ang), sin(rad_ang)) * direction
+
+
+#	ball_instance.set_linear_velocity(dir * velocity)
+	
+	ball_instance.apply_impulse(Vector2(), dir * velocity)
+	
+	stage_node.add_child(ball_instance)
+	resp.append(ball_instance)
+	return resp
+
+
+
+
+
+func _on_Player_body_entered(body):
+	if not body.is_in_group("just_fired"):
+		
+		body.destroy()
+		
+		queue_free()
+		var explosion_instance = explosion_scene.instance()
+		explosion_instance.position = position
+		get_parent().add_child(explosion_instance)
+
+		emit_signal("destroyed")
+
+
+func _on_Player_body_exited(body):
+	if body.is_in_group("just_fired"):
+		body.remove_from_group("just_fired")
+	pass # Replace with function body.
