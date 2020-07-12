@@ -7,9 +7,10 @@ var game_state = WAITING_INPUT
 #var ball_scene = preload("res://Ball.tscn")
 var player_scene = preload("res://scenes/Player.tscn")
 
-var velocity = 100
+#var velocity = 100
 var wind_velocity = 0
 const MAX_VELOCITY = 450
+const MIN_VELOCITY = 0
 #var angle = 90.0
 #onready var player1 = null
 #onready var player2 = null
@@ -99,7 +100,7 @@ func _input(event):
 			else:
 				print("null player")
 	
-			velocity = 100
+#			velocity = 100
 			
 			
 			
@@ -147,18 +148,22 @@ func _process(delta):
 			print(str("current_player => ", currentPlayer))
 			return
 		var angle = curr.pointing_angle
-		if Input.is_key_pressed(KEY_SPACE):
-			velocity = velocity + (100 * delta)
-			if velocity > MAX_VELOCITY:
-				velocity = MAX_VELOCITY
-		if Input.is_key_pressed(KEY_K) and angle <= 360:
+		if Input.is_key_pressed(KEY_K):
+			curr.velocity = curr.velocity + round(50 * delta)
+			if curr.velocity > MAX_VELOCITY:
+				curr.velocity = MAX_VELOCITY
+		if Input.is_key_pressed(KEY_J):
+			curr.velocity = curr.velocity - round(50 * delta)
+			if curr.velocity < MIN_VELOCITY:
+				curr.velocity = MIN_VELOCITY
+		if Input.is_key_pressed(KEY_L) and angle <= 360:
 			angle = angle + (100 * delta)
-		if Input.is_key_pressed(KEY_J) and angle > 0:
+		if Input.is_key_pressed(KEY_H) and angle > 0:
 			angle = angle - (100 * delta)
 		
 		curr.set_pointing_angle(angle)
-		curr.velocity = velocity
-		$Label.text = str("power: ", velocity, "\nangle: ", angle, "\nwind: ", wind_velocity)
+#		curr.velocity = velocity
+		$Label.text = str("power: ", curr.velocity, "\nangle: ", angle, "\nwind: ", wind_velocity)
 	
 	elif game_state == RESOLVING:
 		if not resolvable_items.empty():
