@@ -4,6 +4,7 @@ const FLOOR_WIDTH = 950
 const FLOOR_HEIGHT = 550
 const FLOOR_MIN_X = 50
 
+var texture = preload("res://images/floor_grass.png")
 #onready var image = Image.new()
 #onready var texture = ImageTexture.new()
 
@@ -48,6 +49,9 @@ func hit_floor(pos : Vector2):
 		if res.size() > 0:
 #			$StaticBody2D/CollisionPolygon2D.polygon = res.pop_front()
 			cp.polygon = res.pop_front()
+#			if (cp.get_children().front() != null):
+#				cp.get_children().front().queue_free()
+			cp.get_children().front().polygon = cp.polygon
 		
 		if res.size() >= 1:
 			print("more than one child polygon")
@@ -55,6 +59,12 @@ func hit_floor(pos : Vector2):
 				var collPol = CollisionPolygon2D.new()
 				collPol.polygon = p
 				$StaticBody2D.add_child(collPol)
+				
+				var ground = Polygon2D.new()
+				ground.polygon = p
+				ground.texture = texture
+				collPol.add_child(ground)
+				
 	
 	update()
 
@@ -71,6 +81,16 @@ func create_destruction_polygon(origin = Vector2(500, 250)):
 
 func generate():
 	#creating floor
+	
+	#remove children
+	var collision_polygons = $StaticBody2D.get_children()
+	for cp in collision_polygons:
+		if !(cp is CollisionPolygon2D):
+			continue
+		$StaticBody2D.remove_child(cp);
+	
+	var collPol = CollisionPolygon2D.new()
+	$StaticBody2D.add_child(collPol)
 	
 	side_a_height = randi() % (FLOOR_HEIGHT / 2) + 25 #50
 	side_b_height = randi() % (FLOOR_HEIGHT / 2) + 25 #100
@@ -108,28 +128,36 @@ func generate():
 		
 		i = i + 1
 	
-#	curve.get_baked_points()
+	collPol.polygon = curve.tessellate()
 	
-	$StaticBody2D/CollisionPolygon2D.polygon = curve.tessellate()
+	var ground = null
+	if is_instance_valid(collPol.get_children().front()):
+		ground = collPol.get_children().front()
+	else:
+		ground = Polygon2D.new()
+		ground.texture = texture
+		collPol.add_child(ground)
+	ground.polygon = collPol.polygon
 	
 	update()
-	
-func _draw():
-#	var color = Color(1.0, 1.0, 1.0)
-	var color = Color(0.2, 0.6, 0.2)
-	var colors = PoolColorArray([color])
-	
-	var collision_polygons = $StaticBody2D.get_children()
-	
-	for cp in collision_polygons:
-		if !(cp is CollisionPolygon2D):
-			continue
-		
-		var pol1 = cp.polygon
-		
-		draw_polygon(pol1, colors, pol1)
-		
-#		var pol2 = [Vector2(0, 0), Vector2(512, 0), Vector2(512, 128), Vector2(0, 128)]
+
+
+#func _draw():
+##	var color = Color(1.0, 1.0, 1.0)
+#	var color = Color(0.2, 0.6, 0.2)
+#	var colors = PoolColorArray([color])
 #
-#		draw_polygon(pol1, colors, pol1, texture, texture)
+#	var collision_polygons = $StaticBody2D.get_children()
+#
+#	for cp in collision_polygons:
+#		if !(cp is CollisionPolygon2D):
+#			continue
+#
+#		var pol1 = cp.polygon
+#
+#		draw_polygon(pol1, colors, pol1)
+#
+##		var pol2 = [Vector2(0, 0), Vector2(512, 0), Vector2(512, 128), Vector2(0, 128)]
+##
+##		draw_polygon(pol1, colors, pol1, texture, texture)
 	

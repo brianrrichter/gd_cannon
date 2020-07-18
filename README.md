@@ -13,3 +13,6 @@ Gameplay 01
 
 ![Gameplay 02](/doc/img/gameplay_02.png)
 Gameplay 02
+
+![Gameplay 03](/doc/img/gameplay_03.png)
+Gameplay 03
