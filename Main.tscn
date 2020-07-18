@@ -31,7 +31,8 @@ margin_top = 120.841
 margin_right = 597.173
 margin_bottom = 168.841
 text = "hold and release 'space' to shoot
-'j' and 'k' to adjust the angle
+'h' and 'l' to adjust the angle
+'j' and 'k' to adjust the power
 'r' to start again
 'enter' to start"
 align = 1

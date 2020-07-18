@@ -2,14 +2,14 @@ extends Area2D
 
 signal destroyed()
 
-var ball_scene = preload("res://Ball.tscn")
+var ball_scene = preload("res://scenes/Ball.tscn")
 var explosion_scene = preload("res://scenes/explosion.tscn")
 
 var player_name = 'player'
 
 var pointing_angle = 90.0
 var velocity = 200
-onready var cannon = $Sprite
+onready var cannon = $Cannon
 var direction = -1
 
 
@@ -41,9 +41,10 @@ func shoot():
 	var ball_instance = ball_scene.instance()
 #	ball_instance.add_collision_exception_with(self) ... only for body
 
-	ball_instance.add_to_group("just_fired")
+#	if the ball initial position is inside parent's collisionShape
+#	ball_instance.add_to_group("just_fired")
 
-	ball_instance.position = position
+	ball_instance.position = $Cannon/ball_spawn.global_position
 
 	var angle = pointing_angle
 
