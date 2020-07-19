@@ -46,7 +46,11 @@ func hit_floor(pos : Vector2):
 		
 		var res = Geometry.clip_polygons_2d(pol1, create_destruction_polygon(pos))
 		
-		if res.size() > 0:
+		if res.empty():
+			cp.queue_free()
+			continue
+		
+		elif res.size() > 0:
 #			$StaticBody2D/CollisionPolygon2D.polygon = res.pop_front()
 			cp.polygon = res.pop_front()
 #			if (cp.get_children().front() != null):
