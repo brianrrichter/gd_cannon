@@ -32,7 +32,7 @@ func rotate_deg():
 	cannon.rotation_degrees = pointing_angle -90
 
 
-func _process(delta):
+func _process(_delta):
 	cannon.scale.x = direction
 
 func shoot():

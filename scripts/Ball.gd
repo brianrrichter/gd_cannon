@@ -22,7 +22,7 @@ func _process(_delta):
 #	pass
 
 
-func _on_Ball_body_entered(body):
+func _on_Ball_body_entered(_body):
 	destroy()
 
 func destroy():

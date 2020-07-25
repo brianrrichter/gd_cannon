@@ -73,7 +73,7 @@ func hit_floor(pos : Vector2):
 	update()
 
 func create_destruction_polygon(origin = Vector2(500, 250)):
-	var res : PoolVector2Array
+	var res = PoolVector2Array()
 	var points_qtd = 20
 	var radius = 50
 	
@@ -92,14 +92,16 @@ func generate():
 		if !(cp is CollisionPolygon2D):
 			continue
 		$StaticBody2D.remove_child(cp);
+		cp.queue_free()
 	
 	var collPol = CollisionPolygon2D.new()
 	$StaticBody2D.add_child(collPol)
 	
-	side_a_height = randi() % (FLOOR_HEIGHT / 2) + 25 #50
-	side_b_height = randi() % (FLOOR_HEIGHT / 2) + 25 #100
 	
-	var middle_height = randi() % (FLOOR_HEIGHT / 2) + 25 #100
+	side_a_height = randi() % int(FLOOR_HEIGHT / 2.0) + 25 #50
+	side_b_height = randi() % int(FLOOR_HEIGHT / 2.0) + 25 #100
+	
+	var middle_height = randi() % int(FLOOR_HEIGHT / 2.0) + 25 #100
 	
 	var curve = Curve2D.new()
 	
@@ -111,13 +113,13 @@ func generate():
 	
 	#left side platform
 	array_of_line_points.append(Vector2(FLOOR_WIDTH,FLOOR_HEIGHT - side_b_height))
-	array_of_line_points.append(Vector2(FLOOR_WIDTH - FLOOR_WIDTH * .1,FLOOR_HEIGHT - side_b_height))
+	array_of_line_points.append(Vector2(FLOOR_WIDTH - FLOOR_WIDTH * .1, FLOOR_HEIGHT - side_b_height))
 	
 	#middle slope
-	array_of_line_points.append(Vector2(FLOOR_WIDTH - FLOOR_WIDTH / 2,FLOOR_HEIGHT - middle_height))
+	array_of_line_points.append(Vector2(FLOOR_WIDTH - FLOOR_WIDTH / 2.0, FLOOR_HEIGHT - middle_height))
 	
 	#right side platform
-	array_of_line_points.append(Vector2(FLOOR_MIN_X + FLOOR_WIDTH * .1,FLOOR_HEIGHT - side_a_height))
+	array_of_line_points.append(Vector2(FLOOR_MIN_X + FLOOR_WIDTH * .1, FLOOR_HEIGHT - side_a_height))
 	
 	var i = 0
 	for point in array_of_line_points:
@@ -135,7 +137,7 @@ func generate():
 	collPol.polygon = curve.tessellate()
 	
 	var ground = null
-	if is_instance_valid(collPol.get_children().front()):
+	if collPol.get_child_count() and is_instance_valid(collPol.get_children().front()):
 		ground = collPol.get_children().front()
 	else:
 		ground = Polygon2D.new()
