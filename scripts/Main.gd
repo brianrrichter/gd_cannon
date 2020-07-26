@@ -78,6 +78,12 @@ func on_player_destroyed(player):
 
 func _input(event):
 
+	if event is InputEventKey and event.scancode == KEY_Q and event.pressed == false:
+		get_tree().quit()
+	
+	if event is InputEventKey and event.scancode == KEY_F1 and event.pressed == false:
+		$instructionsLabel.visible = !$instructionsLabel.visible
+	
 	if event is InputEventKey and event.scancode == KEY_T and event.pressed == false:
 		$Floor.test()
 

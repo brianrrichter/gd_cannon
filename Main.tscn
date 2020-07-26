@@ -26,15 +26,16 @@ __meta__ = {
 }
 
 [node name="instructionsLabel" type="Label" parent="."]
-margin_left = 387.173
-margin_top = 120.841
-margin_right = 597.173
-margin_bottom = 168.841
-text = "hold and release 'space' to shoot
+margin_left = 387.0
+margin_top = 97.0
+margin_right = 597.0
+margin_bottom = 220.0
+text = "'F1' to hide/show this message'
 'h' and 'l' to adjust the angle
 'j' and 'k' to adjust the power
 'r' to start again
-'enter' to start"
+'enter' to start
+'q' to quit the game"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false

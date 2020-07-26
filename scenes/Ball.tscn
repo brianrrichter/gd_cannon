@@ -28,4 +28,3 @@ region_enabled = true
 region_rect = Rect2( 368, 53, 11, 11 )
 region_filter_clip = true
 [connection signal="body_entered" from="." to="." method="_on_Ball_body_entered"]
-[connection signal="body_shape_entered" from="." to="." method="_on_Ball_body_shape_entered"]
