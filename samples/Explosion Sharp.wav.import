@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Explosion Sharp.wav-01a4873db65274d9ce7b8d666d4cbfee.sample"
+
+[deps]
+
+source_file="res://samples/Explosion Sharp.wav"
+dest_files=[ "res://.import/Explosion Sharp.wav-01a4873db65274d9ce7b8d666d4cbfee.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

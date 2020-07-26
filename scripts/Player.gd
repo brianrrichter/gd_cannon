@@ -59,6 +59,9 @@ func shoot():
 	
 	stage_node.add_child(ball_instance)
 	resp.append(ball_instance)
+	
+	$ShotAudioStreamPlayer.play()
+	
 	return resp
 
 

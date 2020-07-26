@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/POL-foggy-forest-short.wav-86b997bb3d5e8c5f23a0d4a5779f21ad.sample"
+
+[deps]
+
+source_file="res://music/POL-foggy-forest-short.wav"
+dest_files=[ "res://.import/POL-foggy-forest-short.wav-86b997bb3d5e8c5f23a0d4a5779f21ad.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0

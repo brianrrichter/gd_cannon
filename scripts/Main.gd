@@ -27,6 +27,8 @@ func _ready():
 #	next_round()
 	$Floor.generate()
 	
+	$BackgroundAudioStreamPlayer.play()
+	
 	
 
 
@@ -83,6 +85,11 @@ func _input(event):
 	
 	if event is InputEventKey and event.scancode == KEY_F1 and event.pressed == false:
 		$instructionsLabel.visible = !$instructionsLabel.visible
+	
+	if event is InputEventKey and event.scancode == KEY_F3 and event.pressed == false:
+		var muted = !AudioServer.is_bus_mute(0)
+		$SoundOnOffAnimatedSprite.frame = 1 if muted else 0
+		AudioServer.set_bus_mute(0, muted)
 	
 	if event is InputEventKey and event.scancode == KEY_T and event.pressed == false:
 		$Floor.test()

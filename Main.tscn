@@ -1,12 +1,25 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Floor.tscn" type="PackedScene" id=2]
+[ext_resource path="res://samples/Explosion Sharp.wav" type="AudioStream" id=3]
+[ext_resource path="res://music/POL-foggy-forest-short.wav" type="AudioStream" id=4]
+[ext_resource path="res://ui_images/musicOn.png" type="Texture" id=5]
+[ext_resource path="res://ui_images/musicOff.png" type="Texture" id=6]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 5 ), ExtResource( 6 ) ],
+"loop": false,
+"name": "default",
+"speed": 5.0
+} ]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="Floor" parent="." instance=ExtResource( 2 )]
+position = Vector2( 1, 0 )
 
 [node name="Label" type="Label" parent="."]
 margin_right = 40.0
@@ -27,10 +40,11 @@ __meta__ = {
 
 [node name="instructionsLabel" type="Label" parent="."]
 margin_left = 387.0
-margin_top = 97.0
+margin_top = 96.0
 margin_right = 597.0
-margin_bottom = 220.0
+margin_bottom = 239.0
 text = "'F1' to hide/show this message'
+'F3' turn sound on/off
 'h' and 'l' to adjust the angle
 'j' and 'k' to adjust the power
 'r' to start again
@@ -40,3 +54,15 @@ align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="ExplosionAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -15.0
+
+[node name="BackgroundAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -15.0
+
+[node name="SoundOnOffAnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 979, 34 )
+frames = SubResource( 1 )

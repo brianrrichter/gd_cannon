@@ -31,5 +31,7 @@ func destroy():
 	var explosion_instance = explosion_scene.instance()
 	explosion_instance.position = position
 	get_parent().add_child(explosion_instance)
+	get_node("../ExplosionAudioStreamPlayer").play()
+#	get_parent().get/ExplosionAudioStreamPlayer.play()
 
 	
