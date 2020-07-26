@@ -1,4 +1,4 @@
 .import/
-.export/
+export/
 *.translation
 export_presets.cfg
