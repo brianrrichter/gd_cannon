@@ -42,9 +42,13 @@ func next_round():
 	while not players.empty():
 		players.pop_front().queue_free()
 	
+	while not resolvable_items.empty():
+		resolvable_items.pop_front().queue_free()
+	
+	
 	wind_velocity = randi() % 60 - 30
 	
-	currentPlayer = 0
+	currentPlayer = randi() % 2
 	
 	
 	var player1 = create_new_player("player 1", $Floor.getSpotPosition(0))
