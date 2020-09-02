@@ -1,6 +1,6 @@
 extends Node2D
 
-enum {WELCOME, INITIALIZING, WAITING_INPUT, RESOLVING, CHECKING_WINNER, OVER}
+enum {WELCOME, INITIALIZING, WAITING_INPUT, WAITING_CPU, RESOLVING, CHECKING_WINNER, OVER}
 
 var game_state = WAITING_INPUT
 
@@ -9,8 +9,7 @@ var player_scene = preload("res://scenes/Player.tscn")
 
 #var velocity = 100
 var wind_velocity = 0
-const MAX_VELOCITY = 450
-const MIN_VELOCITY = 0
+
 #var angle = 90.0
 #onready var player1 = null
 #onready var player2 = null
@@ -43,33 +42,41 @@ func next_round():
 		players.pop_front().queue_free()
 	
 	while not resolvable_items.empty():
-		resolvable_items.pop_front().queue_free()
+		var i = resolvable_items.pop_front()
+		if i != null:
+			i.queue_free()
 	
 	
 	wind_velocity = randi() % 60 - 30
 	
 	currentPlayer = randi() % 2
 	
+	var rand_player1_type = randi() % 2
+	var rand_player2_type = (rand_player1_type + 1) % 2 #human vs cpu, choose the type wich is not the player1 type
 	
-	var player1 = create_new_player("player 1", $Floor.getSpotPosition(0))
-	var player2 = create_new_player("player 2", $Floor.getSpotPosition(1))
+	var player1 = create_new_player("Player" if rand_player1_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(0), rand_player1_type) #Globals.player_type.HUMAN)
+	var player2 = create_new_player("Player" if rand_player2_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(1), rand_player2_type) #Globals.player_type.CPU)
 
 	if player1.position.x < player2.position.x:
-		player1.direction = 1
-		player2.direction = -1
+		player1.set_direction(1)
+		player2.set_direction(-1)
 	else:
-		player1.direction = -1
-		player2.direction = 1
-		
-	if get_current_player() != null:
-		get_current_player().set_current_player(true)
+		player1.set_direction(-1)
+		player2.set_direction(1)
 	
 	game_state = WAITING_INPUT
+	
+	var curr = get_current_player()
+	if curr != null:
+		curr.set_current_player(true)
+		if curr.type == Globals.player_type.CPU:
+			game_state = WAITING_CPU
 
-func create_new_player(name, pos):
+func create_new_player(name, pos, type):
 	var player_instance = player_scene.instance()
-	player_instance.name = name
+	player_instance.set_player_name(name)
 	player_instance.position = pos
+	player_instance.type = type
 	add_child(player_instance)
 	players.append(player_instance)
 
@@ -107,6 +114,14 @@ func _input(event):
 			$instructionsLabel.hide()
 			game_state = INITIALIZING
 	elif game_state == WAITING_INPUT:
+#		var curr = get_current_player()
+#		if curr != null and curr.type == Globals.player_type.CPU:
+#			var items = curr.shoot()
+#			for i in items:
+#				resolvable_items.append(i)
+#				i.connect("destroyed", $Floor, "projectile_destroyed", [i])
+#
+#			game_state = RESOLVING
 		if event is InputEventKey and event.scancode == KEY_SPACE and event.pressed == false:
 			var curr = get_current_player()
 			if curr != null:
@@ -152,10 +167,27 @@ func _process(delta):
 			game_state = OVER
 		else:
 			advance_next_player()
-			game_state = WAITING_INPUT
+			var curr = get_current_player()
+			if curr != null and curr.type == Globals.player_type.CPU:
+				game_state = WAITING_CPU
+			else:
+				game_state = WAITING_INPUT
 	elif game_state == OVER:
 		
 		pass;
+	elif game_state == WAITING_CPU:
+		var curr = get_current_player()
+		if curr != null:
+#			curr.velocity = curr.velocity + 50
+			curr.cpu_update_aim()
+			var items = curr.shoot()
+			for i in items:
+				resolvable_items.append(i)
+				i.connect("destroyed", $Floor, "projectile_destroyed", [i])
+		else:
+			print("null player")
+		game_state = RESOLVING
+		
 	elif game_state == WAITING_INPUT:
 		var curr = get_current_player()
 		
@@ -167,12 +199,12 @@ func _process(delta):
 		var angle = curr.pointing_angle
 		if Input.is_key_pressed(KEY_K):
 			curr.velocity = curr.velocity + round(50 * delta)
-			if curr.velocity > MAX_VELOCITY:
-				curr.velocity = MAX_VELOCITY
+			if curr.velocity > Globals.MAX_VELOCITY:
+				curr.velocity = Globals.MAX_VELOCITY
 		if Input.is_key_pressed(KEY_J):
 			curr.velocity = curr.velocity - round(50 * delta)
-			if curr.velocity < MIN_VELOCITY:
-				curr.velocity = MIN_VELOCITY
+			if curr.velocity < Globals.MIN_VELOCITY:
+				curr.velocity = Globals.MIN_VELOCITY
 		if Input.is_key_pressed(KEY_L) and angle <= 360:
 			angle = angle + (100 * delta)
 		if Input.is_key_pressed(KEY_H) and angle > 0:

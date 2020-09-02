@@ -1,5 +1,9 @@
 extends Node
 
+const MAX_VELOCITY = 450
+const MIN_VELOCITY = 50
+
+enum player_type {HUMAN, CPU}
 
 var gravity = -900
 

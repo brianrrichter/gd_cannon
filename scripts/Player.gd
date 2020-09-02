@@ -2,6 +2,8 @@ extends Area2D
 
 signal destroyed()
 
+
+
 var ball_scene = preload("res://scenes/Ball.tscn")
 var explosion_scene = preload("res://scenes/explosion.tscn")
 
@@ -11,6 +13,7 @@ var pointing_angle = 90.0
 var velocity = 200
 onready var cannon = $Cannon
 var direction = -1
+var type = Globals.player_type.HUMAN
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,9 +34,19 @@ func set_pointing_angle(angle):
 func rotate_deg():
 	cannon.rotation_degrees = pointing_angle -90
 
-
-func _process(_delta):
+func set_direction(dir):
+	direction = dir
 	cannon.scale.x = direction
+
+func set_player_name(name):
+	player_name = name
+	$nameLabel.text = player_name
+
+#func _process(_delta):
+#	cannon.scale.x = direction
+
+func cpu_update_aim():
+	velocity = max((velocity + 50) % Globals.MAX_VELOCITY, Globals.MIN_VELOCITY)
 
 func shoot():
 	var resp = []
