@@ -9,11 +9,18 @@ var explosion_scene = preload("res://scenes/explosion.tscn")
 
 var player_name = 'player'
 
-var pointing_angle = 90.0
+var angle_max = 180
+var angle_min = -90
+
+var pointing_angle = 0.0
 var velocity = 200
 onready var cannon = $Cannon
 var direction = -1
 var type = Globals.player_type.HUMAN
+
+#feed information for non human player
+var enemy_position = Vector2(0, 0)
+var projectile_burst_position = Vector2(0, 0)
 
 
 # Called when the node enters the scene tree for the first time.
@@ -28,11 +35,12 @@ func set_current_player(current):
 		$currentPlayerIndication.hide()
 
 func set_pointing_angle(angle):
-	pointing_angle = angle
+	pointing_angle = max(min(angle, angle_max), angle_min)
 	rotate_deg()
 
 func rotate_deg():
-	cannon.rotation_degrees = pointing_angle -90
+#	cannon.rotation_degrees = pointing_angle -90
+	cannon.rotation_degrees = pointing_angle * direction * -1
 
 func set_direction(dir):
 	direction = dir
@@ -46,7 +54,29 @@ func set_player_name(name):
 #	cannon.scale.x = direction
 
 func cpu_update_aim():
-	velocity = max((velocity + 50) % Globals.MAX_VELOCITY, Globals.MIN_VELOCITY)
+	# position of the enemy
+	# position where the ball exploded
+	# burst before or after the enemy
+	
+	var increment = -1
+	if enemy_position.x < position.x:
+		if projectile_burst_position.x < enemy_position.x :
+			increment = -1
+		else:
+			increment = 1
+	else:
+		if projectile_burst_position.x < enemy_position.x :
+			increment = 1
+		else:
+			increment = -1
+			
+	var velocity_increment = 50 * increment
+	var angle_increment = 10 * increment
+	
+	velocity = max(min((velocity + velocity_increment), Globals.MAX_VELOCITY), Globals.MIN_VELOCITY)
+	
+#	pointing_angle = pointing_angle + 10
+	set_pointing_angle(pointing_angle + angle_increment)
 
 func shoot():
 	var resp = []
@@ -59,13 +89,20 @@ func shoot():
 
 	ball_instance.position = $Cannon/ball_spawn.global_position
 
+	ball_instance.connect("destroyed", self, "projectile_destroyed", [ball_instance])
+	
 	var angle = pointing_angle
 
-	var rad_ang = (angle -90) * PI / 180
+	var rad_ang = (angle) * PI / 180
 
-	var dir = Vector2(cos(rad_ang), sin(rad_ang)) * direction
-
-
+	var dir = Vector2()
+	if direction == 1:
+		dir = Vector2(cos(rad_ang), sin(rad_ang) * -1)
+	else:
+		dir = Vector2(cos(rad_ang), sin(rad_ang)) * direction
+		
+	
+	print(str(" >>>>> shoot direction: ", dir))
 #	ball_instance.set_linear_velocity(dir * velocity)
 	
 	ball_instance.apply_impulse(Vector2(), dir * velocity)
@@ -78,6 +115,10 @@ func shoot():
 	return resp
 
 
+func projectile_destroyed(projectile):
+	projectile_burst_position = projectile.position
+	
+	print(str(">>>> ", player_name, " projectile burst position: ", projectile_burst_position));
 
 
 

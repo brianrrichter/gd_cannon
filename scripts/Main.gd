@@ -54,13 +54,34 @@ func next_round():
 	var rand_player1_type = randi() % 2
 	var rand_player2_type = (rand_player1_type + 1) % 2 #human vs cpu, choose the type wich is not the player1 type
 	
-	var player1 = create_new_player("Player" if rand_player1_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(0), rand_player1_type) #Globals.player_type.HUMAN)
-	var player2 = create_new_player("Player" if rand_player2_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(1), rand_player2_type) #Globals.player_type.CPU)
+	var player1
+	var player2
+	
+	var human_vs_human = false
+	var cpu_vs_cpu = false
+	
+	if human_vs_human:
+		player1 = create_new_player("Player", $Floor.getSpotPosition(0),  Globals.player_type.HUMAN)
+		player2 = create_new_player("Player", $Floor.getSpotPosition(1),  Globals.player_type.HUMAN)
+	else :
+		if cpu_vs_cpu:
+			player1 = create_new_player("CPU", $Floor.getSpotPosition(0),  Globals.player_type.CPU)
+			player2 = create_new_player("CPU", $Floor.getSpotPosition(1),  Globals.player_type.CPU)
+		else :
+			player1 = create_new_player("Player" if rand_player1_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(0), rand_player1_type) #Globals.player_type.HUMAN)
+			player2 = create_new_player("Player" if rand_player2_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(1), rand_player2_type) #Globals.player_type.CPU)
+	
+	player1.enemy_position = player2.position
+	player2.enemy_position = player1.position
 
 	if player1.position.x < player2.position.x:
+#		player1.scale.x = 1
+#		player2.scale.x = -1
 		player1.set_direction(1)
 		player2.set_direction(-1)
 	else:
+#		player1.scale.x = -1
+#		player2.scale.x = 1
 		player1.set_direction(-1)
 		player2.set_direction(1)
 	
@@ -114,14 +135,6 @@ func _input(event):
 			$instructionsLabel.hide()
 			game_state = INITIALIZING
 	elif game_state == WAITING_INPUT:
-#		var curr = get_current_player()
-#		if curr != null and curr.type == Globals.player_type.CPU:
-#			var items = curr.shoot()
-#			for i in items:
-#				resolvable_items.append(i)
-#				i.connect("destroyed", $Floor, "projectile_destroyed", [i])
-#
-#			game_state = RESOLVING
 		if event is InputEventKey and event.scancode == KEY_SPACE and event.pressed == false:
 			var curr = get_current_player()
 			if curr != null:
@@ -205,9 +218,9 @@ func _process(delta):
 			curr.velocity = curr.velocity - round(50 * delta)
 			if curr.velocity < Globals.MIN_VELOCITY:
 				curr.velocity = Globals.MIN_VELOCITY
-		if Input.is_key_pressed(KEY_L) and angle <= 360:
+		if Input.is_key_pressed(KEY_L):
 			angle = angle + (100 * delta)
-		if Input.is_key_pressed(KEY_H) and angle > 0:
+		if Input.is_key_pressed(KEY_H):
 			angle = angle - (100 * delta)
 		
 		curr.set_pointing_angle(angle)
