@@ -18,9 +18,16 @@ onready var cannon = $Cannon
 var direction = -1
 var type = Globals.player_type.HUMAN
 
+var base_angle_increment = 90
+var base_velocity_increment = 200
+var prev_increment = null
+var prev_burst_distance = null
+
 #feed information for non human player
 var enemy_position = Vector2(0, 0)
-var projectile_burst_position = Vector2(0, 0)
+var projectile_burst_position = null #Vector2(0, 0)
+var projectile_crossed_at_y = null
+var projectile_crossed_at_x = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -58,20 +65,41 @@ func cpu_update_aim():
 	# position where the ball exploded
 	# burst before or after the enemy
 	
-	var increment = -1
-	if enemy_position.x < position.x:
-		if projectile_burst_position.x < enemy_position.x :
-			increment = -1
-		else:
+#	projectile_crossed_at_x <<<<<<<<<<<<<<<<<<<<<<
+	
+	var increment = 0
+	var burst_distance = 0
+	if projectile_burst_position != null:
+		burst_distance = abs(enemy_position.x - projectile_burst_position.x)
+		
+		if abs(position.x - enemy_position.x) > abs(position.x - projectile_burst_position.x):
 			increment = 1
-	else:
-		if projectile_burst_position.x < enemy_position.x :
-			increment = 1
 		else:
 			increment = -1
-			
-	var velocity_increment = 50 * increment
-	var angle_increment = 10 * increment
+#		if enemy_position.x < position.x:
+#			if projectile_burst_position.x < enemy_position.x :
+#				increment = -1
+#			else:
+#				increment = 1
+#		else:
+#			if projectile_burst_position.x < enemy_position.x :
+#				increment = 1
+#			else:
+#				increment = -1
+	
+	
+	
+	if prev_increment != null and prev_increment != increment: #on change fire further or closer, reduces increments
+		base_velocity_increment = base_velocity_increment / 2
+		base_angle_increment = base_angle_increment * .5
+	elif prev_increment == increment and increment == 1 and prev_burst_distance != null and prev_burst_distance < burst_distance:
+		base_angle_increment = base_angle_increment * 1.5
+	
+	prev_increment = increment
+	prev_burst_distance = burst_distance if prev_burst_distance == null else min(prev_burst_distance, burst_distance)
+	
+	var velocity_increment = base_velocity_increment * increment
+	var angle_increment = base_angle_increment * increment
 	
 	velocity = max(min((velocity + velocity_increment), Globals.MAX_VELOCITY), Globals.MIN_VELOCITY)
 	
@@ -87,7 +115,8 @@ func shoot():
 #	if the ball initial position is inside parent's collisionShape
 #	ball_instance.add_to_group("just_fired")
 
-	ball_instance.position = $Cannon/ball_spawn.global_position
+	ball_instance.init_position($Cannon/ball_spawn.global_position)
+	ball_instance.target_position = enemy_position
 
 	ball_instance.connect("destroyed", self, "projectile_destroyed", [ball_instance])
 	
@@ -117,6 +146,8 @@ func shoot():
 
 func projectile_destroyed(projectile):
 	projectile_burst_position = projectile.position
+	projectile_crossed_at_y = projectile.crossed_at_y
+	projectile_crossed_at_x = projectile.crossed_at_x
 	
 	print(str(">>>> ", player_name, " projectile burst position: ", projectile_burst_position));
 
