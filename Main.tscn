@@ -46,6 +46,7 @@ margin_right = 597.0
 margin_bottom = 239.0
 text = "'F1' to hide/show this message'
 'F3' turn sound on/off
+'F4' change game mode for nex round
 'h' and 'l' to adjust the angle
 'j' and 'k' to adjust the power
 'r' to start again
@@ -69,3 +70,13 @@ position = Vector2( 979, 34 )
 frames = SubResource( 1 )
 
 [node name="ParallaxBackground" parent="." instance=ExtResource( 7 )]
+
+[node name="GameModeLabel" type="Label" parent="."]
+margin_left = 681.0
+margin_top = 17.0
+margin_right = 767.0
+margin_bottom = 31.0
+text = "Game Mode: "
+__meta__ = {
+"_edit_use_anchors_": false
+}

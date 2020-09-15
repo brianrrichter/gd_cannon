@@ -2,10 +2,15 @@ extends Node2D
 
 enum {WELCOME, INITIALIZING, WAITING_INPUT, WAITING_CPU, RESOLVING, CHECKING_WINNER, OVER}
 
+enum GAME_MODE {HUMAN_VS_HUMAN, HUMAN_VS_CPU, CPU_VS_CPU}
+
 var game_state = WAITING_INPUT
+
+var game_mode = GAME_MODE.HUMAN_VS_HUMAN
 
 #var ball_scene = preload("res://Ball.tscn")
 var player_scene = preload("res://scenes/Player.tscn")
+var cpu_player_scene = preload("res://scenes/CpuPlayer.tscn")
 
 #var velocity = 100
 var wind_velocity = 0
@@ -27,6 +32,8 @@ func _ready():
 	$Floor.generate()
 	
 	$BackgroundAudioStreamPlayer.play()
+	
+	updateGameModeLabel()
 	
 	
 
@@ -59,14 +66,11 @@ func next_round():
 	var player1
 	var player2
 	
-	var human_vs_human = false
-	var cpu_vs_cpu = false
-	
-	if human_vs_human:
+	if game_mode == GAME_MODE.HUMAN_VS_HUMAN:
 		player1 = create_new_player("Player", $Floor.getSpotPosition(0),  Globals.player_type.HUMAN)
 		player2 = create_new_player("Player", $Floor.getSpotPosition(1),  Globals.player_type.HUMAN)
 	else :
-		if cpu_vs_cpu:
+		if game_mode == GAME_MODE.CPU_VS_CPU:
 			player1 = create_new_player("CPU", $Floor.getSpotPosition(0),  Globals.player_type.CPU)
 			player2 = create_new_player("CPU", $Floor.getSpotPosition(1),  Globals.player_type.CPU)
 		else :
@@ -96,7 +100,14 @@ func next_round():
 			game_state = WAITING_CPU
 
 func create_new_player(name, pos, type):
-	var player_instance = player_scene.instance()
+	var player_instance = null
+	
+	if type == Globals.player_type.HUMAN:
+		player_instance = player_scene.instance()
+	else:
+		player_instance = cpu_player_scene.instance()
+	
+	
 	player_instance.set_player_name(name)
 	player_instance.position = pos
 	player_instance.type = type
@@ -117,18 +128,22 @@ func _input(event):
 	if event is InputEventKey and event.scancode == KEY_Q and event.pressed == false:
 		get_tree().quit()
 	
-	if event is InputEventKey and event.scancode == KEY_F1 and event.pressed == false:
+	elif event is InputEventKey and event.scancode == KEY_F1 and event.pressed == false:
 		$instructionsLabel.visible = !$instructionsLabel.visible
-	
-	if event is InputEventKey and event.scancode == KEY_F3 and event.pressed == false:
+		
+	elif event is InputEventKey and event.scancode == KEY_F3 and event.pressed == false:
 		var muted = !AudioServer.is_bus_mute(0)
 		$SoundOnOffAnimatedSprite.frame = 1 if muted else 0
 		AudioServer.set_bus_mute(0, muted)
 	
-	if event is InputEventKey and event.scancode == KEY_T and event.pressed == false:
+	elif event is InputEventKey and event.scancode == KEY_F4 and event.pressed == false:
+		game_mode = (game_mode + 1) % GAME_MODE.size()
+		updateGameModeLabel()
+	
+	elif event is InputEventKey and event.scancode == KEY_T and event.pressed == false:
 		$Floor.test()
 
-	if game_state != WELCOME and event is InputEventKey and event.scancode == KEY_R and event.pressed == false:
+	elif game_state != WELCOME and event is InputEventKey and event.scancode == KEY_R and event.pressed == false:
 #		get_tree().reload_current_scene()
 		next_round()
 
@@ -152,6 +167,12 @@ func _input(event):
 			
 			
 			game_state = RESOLVING
+
+func updateGameModeLabel():
+#	var texto = ""
+#	if game_mode == GAME_MODE.HUMAN_VS_CPU.
+#	game_mode = 
+	$GameModeLabel.text = str("Game Mode: ", GAME_MODE.keys()[game_mode])
 
 func advance_next_player():
 	var curr = get_current_player()
