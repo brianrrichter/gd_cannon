@@ -34,14 +34,14 @@ func _process(_delta):
 	var max_x = max(previous_position.x, position.x)
 	
 	if target_position.x >= min_x and target_position.x <= max_x:
-		print(str("crossed target x at ball y: ", position.y))
+		print(str("crossed target x 0 at ball y: ", position.y))
 		crossed_at_y = position.y
 	
 	var min_y = min(previous_position.y, position.y)
 	var max_y = max(previous_position.y, position.y)
 	
 	if target_position.y >= min_y and target_position.y <= max_y:
-		print(str("crossed target y at ball x: ", position.x))
+		print(str("crossed target y 0 at ball x: ", position.x))
 		crossed_at_x = position.x
 	
 	

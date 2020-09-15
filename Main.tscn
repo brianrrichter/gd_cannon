@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Floor.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://music/POL-foggy-forest-short.wav" type="AudioStream" id=4]
 [ext_resource path="res://ui_images/musicOn.png" type="Texture" id=5]
 [ext_resource path="res://ui_images/musicOff.png" type="Texture" id=6]
+[ext_resource path="res://scenes/ParallaxBackground.tscn" type="PackedScene" id=7]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -66,3 +67,5 @@ volume_db = -15.0
 [node name="SoundOnOffAnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 979, 34 )
 frames = SubResource( 1 )
+
+[node name="ParallaxBackground" parent="." instance=ExtResource( 7 )]

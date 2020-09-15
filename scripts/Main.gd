@@ -49,6 +49,8 @@ func next_round():
 	
 	wind_velocity = randi() % 60 - 30
 	
+	$ParallaxBackground.set_wind_velocity(wind_velocity)
+	
 	currentPlayer = randi() % 2
 	
 	var rand_player1_type = randi() % 2

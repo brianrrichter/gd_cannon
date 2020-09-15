@@ -18,9 +18,11 @@ onready var cannon = $Cannon
 var direction = -1
 var type = Globals.player_type.HUMAN
 
-var base_angle_increment = 90
+var min_angle_increment = 5
+var min_velocity_increment = 25
+var base_angle_increment = 15
 var base_velocity_increment = 200
-var prev_increment = null
+var prev_increase_decrease = null
 var prev_burst_distance = null
 
 #feed information for non human player
@@ -28,6 +30,8 @@ var enemy_position = Vector2(0, 0)
 var projectile_burst_position = null #Vector2(0, 0)
 var projectile_crossed_at_y = null
 var projectile_crossed_at_x = null
+
+var angle_inverted_due_continuously_incrementing = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -67,39 +71,51 @@ func cpu_update_aim():
 	
 #	projectile_crossed_at_x <<<<<<<<<<<<<<<<<<<<<<
 	
-	var increment = 0
-	var burst_distance = 0
+	var increase_decrease = 0
+	var burst_distance = null
 	if projectile_burst_position != null:
 		burst_distance = abs(enemy_position.x - projectile_burst_position.x)
 		
+#		if projectile_crossed_at_y == null or projectile_crossed_at_y < 0:
 		if abs(position.x - enemy_position.x) > abs(position.x - projectile_burst_position.x):
-			increment = 1
+			increase_decrease = 1
 		else:
-			increment = -1
+			increase_decrease = -1
 #		if enemy_position.x < position.x:
 #			if projectile_burst_position.x < enemy_position.x :
-#				increment = -1
+#				increase_decrease = -1
 #			else:
-#				increment = 1
+#				increase_decrease = 1
 #		else:
 #			if projectile_burst_position.x < enemy_position.x :
-#				increment = 1
+#				increase_decrease = 1
 #			else:
-#				increment = -1
+#				increase_decrease = -1
 	
 	
+	print(str(">>> prev_burst_distance: ", prev_burst_distance, ", burst_distance: ", burst_distance))
 	
-	if prev_increment != null and prev_increment != increment: #on change fire further or closer, reduces increments
+	
+	if prev_increase_decrease != null and prev_increase_decrease != increase_decrease: #on change fire further or closer, reduces increments
+		
+		angle_inverted_due_continuously_incrementing = false
+		
 		base_velocity_increment = base_velocity_increment / 2
 		base_angle_increment = base_angle_increment * .5
-	elif prev_increment == increment and increment == 1 and prev_burst_distance != null and prev_burst_distance < burst_distance:
-		base_angle_increment = base_angle_increment * 1.5
+	elif prev_increase_decrease == increase_decrease and increase_decrease == 1 and prev_burst_distance != null and prev_burst_distance < burst_distance:
+		#if it is still increasing the power and the last burst was closer to the target, 
+		
+		if !angle_inverted_due_continuously_incrementing:
+			angle_inverted_due_continuously_incrementing = true #for inverting only once
+			
+			#invert the angle, so it'll increase in the opposite of velocity, making the ball go further
+			base_angle_increment = base_angle_increment * -1
 	
-	prev_increment = increment
+	prev_increase_decrease = increase_decrease
 	prev_burst_distance = burst_distance if prev_burst_distance == null else min(prev_burst_distance, burst_distance)
 	
-	var velocity_increment = base_velocity_increment * increment
-	var angle_increment = base_angle_increment * increment
+	var velocity_increment = base_velocity_increment * increase_decrease
+	var angle_increment = base_angle_increment * increase_decrease
 	
 	velocity = max(min((velocity + velocity_increment), Globals.MAX_VELOCITY), Globals.MIN_VELOCITY)
 	
