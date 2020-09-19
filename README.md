@@ -16,3 +16,6 @@ Gameplay 02
 
 ![Gameplay 03](/doc/img/gameplay_03.png)
 Gameplay 03
+
+![Gameplay 04](/doc/img/gameplay_04.png)
+Gameplay 04
