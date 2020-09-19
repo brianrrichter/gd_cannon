@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Floor.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://ui_images/musicOn.png" type="Texture" id=5]
 [ext_resource path="res://ui_images/musicOff.png" type="Texture" id=6]
 [ext_resource path="res://scenes/ParallaxBackground.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/Hud.tscn" type="PackedScene" id=8]
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -41,9 +42,9 @@ __meta__ = {
 
 [node name="instructionsLabel" type="Label" parent="."]
 margin_left = 387.0
-margin_top = 96.0
-margin_right = 597.0
-margin_bottom = 239.0
+margin_top = 60.0
+margin_right = 626.0
+margin_bottom = 281.0
 text = "'F1' to hide/show this message'
 'F3' turn sound on/off
 'F4' change game mode for nex round
@@ -80,3 +81,5 @@ text = "Game Mode: "
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Hud" parent="." instance=ExtResource( 8 )]

@@ -17,3 +17,8 @@
 
 * music
 ** https://www.playonloop.com/2019-music-loops/foggy-forest/
+
+# Fonts
+
+* Hack-Regular.ttf
+** https://github.com/source-foundry/Hack

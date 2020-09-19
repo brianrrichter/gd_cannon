@@ -181,6 +181,7 @@ func advance_next_player():
 	
 	if get_current_player() != null:
 		get_current_player().set_current_player(true)
+		$Hud.show_message(str(get_current_player().player_name, "'s turn!"))
 
 func get_current_player():
 	if players.size() <= currentPlayer:
@@ -198,7 +199,7 @@ func _process(delta):
 	elif game_state == CHECKING_WINNER:
 		if players.size() <= 1:
 			
-			$gameOverLabel.text = (str(players.front().name, " WON!")) if not players.empty() else str("tie")
+			$gameOverLabel.text = (str(players.front().player_name, " WON!")) if not players.empty() else str("tie")
 			$gameOverLabel.show()
 			game_state = OVER
 		else:
