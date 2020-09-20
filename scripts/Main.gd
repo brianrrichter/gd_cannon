@@ -21,6 +21,8 @@ var wind_velocity = 0
 onready var players = []
 onready var currentPlayer = 0
 
+var players_score = null
+
 var resolvable_items = []
 
 
@@ -41,6 +43,7 @@ func _ready():
 	
 
 func next_round():
+	
 	$gameOverLabel.hide()
 	
 	$Floor.generate()
@@ -67,12 +70,12 @@ func next_round():
 	var player2
 	
 	if game_mode == GAME_MODE.HUMAN_VS_HUMAN:
-		player1 = create_new_player("Player", $Floor.getSpotPosition(0),  Globals.player_type.HUMAN)
-		player2 = create_new_player("Player", $Floor.getSpotPosition(1),  Globals.player_type.HUMAN)
+		player1 = create_new_player("Player1", $Floor.getSpotPosition(0),  Globals.player_type.HUMAN)
+		player2 = create_new_player("Player2", $Floor.getSpotPosition(1),  Globals.player_type.HUMAN)
 	else :
 		if game_mode == GAME_MODE.CPU_VS_CPU:
-			player1 = create_new_player("CPU", $Floor.getSpotPosition(0),  Globals.player_type.CPU)
-			player2 = create_new_player("CPU", $Floor.getSpotPosition(1),  Globals.player_type.CPU)
+			player1 = create_new_player("CPU1", $Floor.getSpotPosition(0),  Globals.player_type.CPU)
+			player2 = create_new_player("CPU2", $Floor.getSpotPosition(1),  Globals.player_type.CPU)
 		else :
 			player1 = create_new_player("Player" if rand_player1_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(0), rand_player1_type) #Globals.player_type.HUMAN)
 			player2 = create_new_player("Player" if rand_player2_type == Globals.player_type.HUMAN else "CPU", $Floor.getSpotPosition(1), rand_player2_type) #Globals.player_type.CPU)
@@ -91,6 +94,11 @@ func next_round():
 		player1.set_direction(-1)
 		player2.set_direction(1)
 	
+	if players_score == null:
+		players_score = {player1.player_name: 0, player2.player_name: 0}
+		
+	update_score_label()
+	
 	game_state = WAITING_INPUT
 	
 	var curr = get_current_player()
@@ -98,6 +106,18 @@ func next_round():
 		curr.set_current_player(true)
 		if curr.type == Globals.player_type.CPU:
 			game_state = WAITING_CPU
+
+func update_score_label():
+	if players.size() < 2:
+		print("2 players needed for update_score")
+		return
+	var player1 = players[0]
+	var player2 = players[1]
+	$Hud.set_score(player1.player_name, players_score[player1.player_name], player2.player_name, players_score[player2.player_name])
+
+func add_score_point(player_name, points):
+	players_score[player_name] = players_score[player_name] + points
+	update_score_label()
 
 func create_new_player(name, pos, type):
 	var player_instance = null
@@ -139,6 +159,10 @@ func _input(event):
 	elif event is InputEventKey and event.scancode == KEY_F4 and event.pressed == false:
 		game_mode = (game_mode + 1) % GAME_MODE.size()
 		updateGameModeLabel()
+		
+		#score is based on players names, and wont find different names on the dicitonary
+		print('clean score')
+		players_score = null
 	
 	elif event is InputEventKey and event.scancode == KEY_T and event.pressed == false:
 		$Floor.test()
@@ -201,6 +225,10 @@ func _process(delta):
 			
 			$gameOverLabel.text = (str(players.front().player_name, " WON!")) if not players.empty() else str("tie")
 			$gameOverLabel.show()
+			
+			if not players.empty():
+				add_score_point(players.front().player_name, 1)
+			
 			game_state = OVER
 		else:
 			advance_next_player()
