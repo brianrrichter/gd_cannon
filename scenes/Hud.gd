@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+func _ready():
+	$Message.hide()
 
 func show_message(text):
 	$Message.text = text

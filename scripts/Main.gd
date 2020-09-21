@@ -104,6 +104,7 @@ func next_round():
 	var curr = get_current_player()
 	if curr != null:
 		curr.set_current_player(true)
+		$Hud.show_message(str(curr.player_name, "'s turn!"))
 		if curr.type == Globals.player_type.CPU:
 			game_state = WAITING_CPU
 
