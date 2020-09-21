@@ -108,12 +108,16 @@ func next_round():
 			game_state = WAITING_CPU
 
 func update_score_label():
-	if players.size() < 2:
+
+	if players_score != null and players_score.keys().size() < 2:
 		print("2 players needed for update_score")
 		return
-	var player1 = players[0]
-	var player2 = players[1]
-	$Hud.set_score(player1.player_name, players_score[player1.player_name], player2.player_name, players_score[player2.player_name])
+	
+	var player1_nome = players_score.keys()[0]
+	var player2_nome = players_score.keys()[1]
+	
+	$Hud.set_score(player1_nome, players_score[player1_nome], player2_nome, players_score[player2_nome])
+	
 
 func add_score_point(player_name, points):
 	players_score[player_name] = players_score[player_name] + points
