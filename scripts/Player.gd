@@ -150,6 +150,8 @@ func shoot():
 	print(str(" >>>>> shoot direction: ", dir))
 #	ball_instance.set_linear_velocity(dir * velocity)
 	
+	$Cannon/SmokeAnimationPlayer.play("shoot")
+	
 	ball_instance.apply_impulse(Vector2(), dir * velocity)
 	
 	stage_node.add_child(ball_instance)

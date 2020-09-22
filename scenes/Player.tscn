@@ -1,12 +1,64 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://images/current_player.png" type="Texture" id=1]
 [ext_resource path="res://scripts/Player.gd" type="Script" id=2]
 [ext_resource path="res://icon.png" type="Texture" id=3]
 [ext_resource path="res://images/cannon_spritesheet.png" type="Texture" id=4]
 [ext_resource path="res://samples/Gunshot.wav" type="AudioStream" id=5]
+[ext_resource path="res://images/smoke.png" type="Texture" id=6]
 
 [sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="Animation" id=2]
+resource_name = "shoot"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Smoke/smoke:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0.248644, 0.248644 ), Vector2( 0.599665, 0.599665 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Smoke/smoke:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Smoke/smoke:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 33.7188, -8.69296 ), Vector2( 38.2188, -8.69296 ) ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("Smoke/smoke:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
 
 [node name="Player" type="Area2D"]
 collision_mask = 2
@@ -31,6 +83,19 @@ visible = false
 position = Vector2( 26.4013, -9.12627 )
 scale = Vector2( 0.0564158, 0.0564158 )
 texture = ExtResource( 3 )
+
+[node name="Smoke" type="Node2D" parent="Cannon"]
+
+[node name="smoke" type="Sprite" parent="Cannon/Smoke"]
+visible = false
+modulate = Color( 1, 1, 1, 0 )
+position = Vector2( 38.2188, -8.69296 )
+rotation = 2.44346
+scale = Vector2( 0.599665, 0.599665 )
+texture = ExtResource( 6 )
+
+[node name="SmokeAnimationPlayer" type="AnimationPlayer" parent="Cannon"]
+anims/shoot = SubResource( 2 )
 
 [node name="ShotAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
